@@ -1,3 +1,9 @@
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
 body,
 p,
 h1,
@@ -25,6 +31,7 @@ body {
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr auto;
   justify-items: center;
+  padding: 0.25rem 0.65rem;
 }
 
 #content {
@@ -88,8 +95,8 @@ table.dataTable {
 }
 
 .dataTables_wrapper {
-  width: 95%;
-  margin-top: 1rem;
+  width: 100%;
+  padding: 0.5rem 1rem;
 }
 
 .dataTables_info,
@@ -301,5 +308,5 @@ table.dt tr.child div {
 }
 
 table.dataTable.no-footer {
-  border-bottom: 0.1rem solid rgba(98, 171, 231, 0.527);
+  border-bottom: 0.1rem solid rgba(98, 171, 231, 0.527) !important;
 }
