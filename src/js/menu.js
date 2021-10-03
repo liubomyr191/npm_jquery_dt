@@ -1,16 +1,5 @@
 let componentsFormats={
-    sajax:(httpUrl="",httpType="POST",httpData={})=>{
-      return{
-          "url":httpUrl
-          ,"method":httpType
-          ,"data":httpData
-          ,"timeout":30000
-          ,"beforeSend":()=>{}
-          ,"fail":(data,xhr, status, error)=>{return xhr.responseText;}
-          ,"success":()=>{}
-      }
-    }
-    ,dtTable:()=>{
+  dtTable:()=>{
       return {
         "order":[[0,'desc']]
         ,"dom":"<'dtToolBar'<'dtInfo'li>pBf>t"
@@ -30,13 +19,9 @@ let componentsFormats={
             }
           }
         }
-        /*,"ajax":{
-          "type":"POST"
-          ,"error":(xhr, status, error)=>{ if(xhr.status>=200 && xhr.status<=299){return;} return xhr.status;}
-        }*/
         ,"language":{
           "lengthMenu":"_MENU_"
-          ,"paginate":{"first":"first","previous":"prev","next":"next","last":"last"}
+          ,"paginate":{"first":"<i class='fas fa-angle-double-left'></i>","previous":"<i class='fas fa-angle-left'></i>","next":"<i class='fas fa-angle-right'></i>","last":"<i class='fas fa-angle-double-right'></i>"}
           ,"infoEmpty":"0 a 0 de 0"
           ,"emptyTable":"Sin registros."
           ,"info":"_START_ a _END_ de _TOTAL_"
@@ -49,22 +34,20 @@ let componentsFormats={
           {"targets":0,"class":"dtDetails"}
           ,{"targets":-1,"width":"1px","orderable":false,"searchable":false,"data":null,"class":"dtRowsActions","render":()=>{
             return `<div class='dropstart'>
-                  <div class='dropdown-toggle' data-bs-toggle='dropdown'>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                  </div>
-                  <div class='dropdown-menu'>
-                    <a class='dropdown-item' data-cmd='Eliminar'><i class='far fa-trash-alt'></i>Eliminar</a>
-                    <a class='dropdown-item' data-cmd='Modificar'><i class='fas fa-edit'></i>Modificar</a>
-                  </div>
-                </div>`;
+                      <div class='dropdown-toggle' data-bs-toggle='dropdown'>
+                          <i class='fas fa-ellipsis-v'></i>
+                      </div>
+                      <div class='dropdown-menu'>
+                        <a class='dropdown-item' data-cmd='Eliminar'><i class='far fa-trash-alt'></i>Eliminar</a>
+                        <a class='dropdown-item' data-cmd='Modificar'><i class='fas fa-edit'></i>Modificar</a>
+                      </div>
+                    </div>`;
           }}
         ]
         ,"buttons":[
-          {"extend":"excelHtml5","className":"dtExport","text":"<i class='fas fa-file-excel'></i>","exportOptions":{"columns":"th[data-export='y']"}}
-          ,{"extend":"pdfHtml5","className":"dtExport","text":"<i class='fas fa-file-pdf'></i>","exportOptions":{"columns":"th[data-export='y']"}}
-          ,{"extend":"print","className":"dtExport","text":"<i class='fas fa-print'></i>","exportOptions":{"columns":"th[data-export='y']"}
+          {"extend":"excelHtml5","title":"","className":"dtExport","text":"<i class='fas fa-file-excel'></i>","exportOptions":{"columns":"th[data-export='y']"}}
+          ,{"extend":"pdfHtml5","title":"","className":"dtExport","text":"<i class='fas fa-file-pdf'></i>","exportOptions":{"columns":"th[data-export='y']"}}
+          ,{"extend":"print","title":"","className":"dtExport","text":"<i class='fas fa-print'></i>","exportOptions":{"columns":"th[data-export='y']"}
             ,"customize":(win)=>{
                 $(win.document.body).css("font-size","0.95rem");
                 $(win.document.body).find("h1").remove();
@@ -80,4 +63,4 @@ let componentsFormats={
   }
 
 //console.log($("#dbDt"));
-$('#dbDt').DataTable(componentsFormats.dtTable());
+$("#dbDt").DataTable(componentsFormats.dtTable());

@@ -10,6 +10,7 @@
     "vite": "^2.5.4"
   },
   "dependencies": {
+    "jquery": "^3.6.0",
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@popperjs/core": "^2.10.1",
     "bootstrap": "^5.1.1",
@@ -19,7 +20,6 @@
     "datatables.net-dt": "^1.11.3",
     "datatables.net-responsive": "^2.2.9",
     "datatables.net-responsive-dt": "^2.2.9",
-    "jquery": "^3.6.0",
     "jszip": "^3.7.1",
     "navigo": "^8.11.1",
     "pdfmake": "^0.2.2"
