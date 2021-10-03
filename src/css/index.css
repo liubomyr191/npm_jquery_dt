@@ -46,14 +46,17 @@ table.dataTable {
   margin: 0px !important;
   max-width: unset !important;
 }
+
 .dt {
   width: 100% !important;
   position: relative;
-  border: 0.1rem solid rgba(98, 171, 231, 0.527);
   box-sizing: border-box;
   border-radius: 0.5rem;
-  padding: 0.1rem !important;
-  overflow: hidden;
+  padding: 0.2rem !important;
+}
+
+.dt[data-overflow="y"] {
+  overflow: auto;
 }
 
 .dataTableContainer {
@@ -205,20 +208,44 @@ table.dataTable {
 
 .dt > thead > tr {
   position: relative;
-  background-color: rgba(98, 182, 238, 0.678);
   color: rgba(0, 0, 0, 1);
   box-shadow: inset 0 -0.175rem 0 0 rgba(0, 0, 0, 0.175);
 }
 
-.dt > thead > tr > th:last-child::after {
-  content: "";
-  width: 110%;
-  height: 110%;
-  position: absolute;
-  top: -10%;
-  left: -5%;
-  background-color: rgba(98, 182, 238, 1);
-  z-index: -1;
+.dt > thead > tr > th {
+  background-color: rgba(98, 182, 238, 0.678);
+}
+
+.dt > thead > tr > th:first-child {
+  border-radius: 0.5rem 0 0 0;
+}
+
+.dt > thead > tr > th:last-child {
+  border-radius: 0 0.5rem 0 0;
+}
+
+.dt > tbody > tr:last-child > td:last-child {
+  border-radius: 0 0 0.5rem 0;
+}
+
+.dt > tbody > tr:last-child > td:first-child {
+  border-radius: 0 0 0 0.5rem;
+}
+
+.dt > tbody > tr > td:first-child {
+  border-left: 0.1rem solid rgba(98, 171, 231, 0.527);
+}
+
+.dt > tbody > tr > td:last-child {
+  border-right: 0.1rem solid rgba(98, 171, 231, 0.527);
+}
+
+.dt > tbody > tr:last-child > td {
+  border-bottom: 0.1rem solid rgba(98, 171, 231, 0.527);
+}
+
+.dt > tbody > tr.child:last-child > td {
+  border-radius: 0 0 0.5rem 0.5rem;
 }
 
 .dt > tbody > tr.odd {
@@ -229,10 +256,18 @@ table.dataTable {
   box-shadow: inset 0 -0.07rem 0 0 #cecece;
 }
 
-.dt > tbody > tr:not(.dtLoading):hover {
+.dt > tbody > tr:not(.dtLoading):not(:last-child):hover {
   box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0,
     0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
   background-color: rgba(167, 171, 173, 0.5);
+  z-index: 1;
+}
+
+.dt > tbody > tr:not(.dtLoading):last-child:hover {
+  box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0,
+    0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  background-color: rgba(167, 171, 173, 0.5);
+  border-radius: 0 0 0.5rem 0.5rem;
   z-index: 1;
 }
 
@@ -247,7 +282,7 @@ table.dt.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control:before {
   width: 1.85em;
   height: 1.85em;
   box-sizing: border-box;
-  left: 15px;
+  left: 20px;
   background-image: url(./find.png);
   background-size: 1.5em 1.5em;
   background-position: center;
@@ -308,5 +343,5 @@ table.dt tr.child div {
 }
 
 table.dataTable.no-footer {
-  border-bottom: 0.1rem solid rgba(98, 171, 231, 0.527) !important;
+  border-bottom: unset !important;
 }
