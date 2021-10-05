@@ -21,7 +21,8 @@ var componentsFormats={
   dtTable:()=>{
       return {
         "order":[[0,'desc']]
-        ,"dom":"<'dtToolBar'<'dtInfo'li>p<'dtFilters'>Bf><>t"
+        //,"dom":"<'dtToolBar'<'dtInfo'li>p<'dtFilters'>Bf><>t"
+        ,"dom":"<'dtToolBar'<'dtInfo'li>f<'dtAdd'><'dtFilters'><'dtExports dropdown'B>><t>p"
         ,"pagingType":"full_numbers"
         ,"deferRender":true
         ,"processing":true
@@ -64,9 +65,9 @@ var componentsFormats={
           }}
         ]
         ,"buttons":[
-          {"extend":"excelHtml5","title":"","className":"dtExport","text":"<i class='fas fa-file-excel'></i>","exportOptions":{"columns":"th[data-export='y']"}}
-          ,{"extend":"pdfHtml5","title":"","className":"dtExport","text":"<i class='fas fa-file-pdf'></i>","exportOptions":{"columns":"th[data-export='y']"}}
-          ,{"extend":"print","title":"","className":"dtExport","text":"<i class='fas fa-print'></i>","exportOptions":{"columns":"th[data-export='y']"}
+          ,{"extend":"excelHtml5","title":"","className":"dtExport","text":"<i class='fas fa-file-excel'></i><span>Excel</span>","exportOptions":{"columns":"th[data-export='y']"}}
+          ,{"extend":"pdfHtml5","title":"","className":"dtExport","text":"<i class='fas fa-file-pdf'></i><span>PDF</span>","exportOptions":{"columns":"th[data-export='y']"}}
+          ,{"extend":"print","title":"","className":"dtExport","text":"<i class='fas fa-print'></i><span>Print</span>","exportOptions":{"columns":"th[data-export='y']"}
             ,"customize":(win)=>{
                 $(win.document.body).css("font-size","0.95rem");
                 $(win.document.body).find("h1").remove();
@@ -77,6 +78,14 @@ var componentsFormats={
             }
           }
         ]
+        ,"initComplete": function(settings, json) {
+          let exportMenu=$(this).parents("#dbDt_wrapper");
+          exportMenu.find(".dt-buttons").addClass("dropdown-menu");
+          exportMenu.find(".dtExports").prepend("<div class='dropdown-toggle' data-bs-toggle='dropdown'><span>Export</span><i class='fas fa-download'></i></div>");
+          exportMenu.find(".dt-button").addClass("dropdown-item");
+          exportMenu.find(".dtFilters").append("<span>Filters</span><i class='fas fa-filter'></i>");
+          exportMenu.find(".dtAdd").append("<span>Add</span><i class='fas fa-plus-circle'></i>");
+        }
       };
   }
 }
