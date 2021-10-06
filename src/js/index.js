@@ -19,8 +19,7 @@ import Navigo from "navigo";
 var componentsFormats={
   dtTable:()=>{
       return {
-        "order":[[0,'desc']]
-        //,"dom":"<'dtToolBar'<'dtInfo'li>p<'dtFilters'>Bf><>t"
+        "order":[[0,"desc"]]
         ,"dom":"<'dtToolBar'<'dtInfo'li>f<'dtAdd'><'dtFilters'><'dtExports dropdown'B>><t>p"
         ,"pagingType":"full_numbers"
         ,"deferRender":true
@@ -41,7 +40,6 @@ var componentsFormats={
         ,"ajax":{
           "type":"POST"
           ,"datatype": "json"
-          ,"url":"http://3.139.87.28/backend/DataTables/"
           ,"error":(xhr, status, error)=>{if(xhr.status>=200 && xhr.status<=299){return;} console.log(`HTTP request error: ${xhr.status}`); }
         }
         ,"language":{
@@ -84,12 +82,12 @@ var componentsFormats={
           }
         ]
         ,"initComplete": function(settings, json) {
-          /*let exportMenu=$(this).parents("#dbDt_wrapper");
+          let exportMenu=$(this).parents("#dbDt_wrapper");
           exportMenu.find(".dt-buttons").addClass("dropdown-menu");
           exportMenu.find(".dtExports").prepend("<div class='dropdown-toggle' data-bs-toggle='dropdown'><span>Export</span><i class='fas fa-download'></i></div>");
           exportMenu.find(".dt-button").addClass("dropdown-item");
           exportMenu.find(".dtFilters").append("<span>Filters</span><i class='fas fa-filter'></i>");
-          exportMenu.find(".dtAdd").append("<span>Add</span><i class='fas fa-plus-circle'></i>");*/
+          exportMenu.find(".dtAdd").append("<span>Add</span><i class='fas fa-plus-circle'></i>");
         }
       };
   }
@@ -100,60 +98,63 @@ function filterableTable(htmlTable,url){
   let availableFields=[];
 	let tableId=$(htmlTable)[0].id;
 	let conf=componentsFormats.dtTable();
+  conf.ajax.url=url;
+	conf.ajax.data=function(d){ d.opt="dbData";
+		//d.filters=filterableTableFilters(`dtFilter_${tableId}`,"getFilters");
+	};
 
   //add index and data-name to columns for later use
 	htmlTable.find("thead>tr>th").each((index,header)=>{
 		$(header).attr("data-num",index);
+    //replace the spaces in the name for underscore for backend purpose. 
     $(header).attr("data-name",$(header).text()!="" ? $(header).text().replace(" ","_") : "-1");
 		if($(header).attr("data-name")==-1){return;}
 		availableFields.push({"name":$(header).attr("data-name"),"type":$(header).attr("data-type"),"text":$(header).text()});
 	});
 	
 	//create modal to filter table data
-/*	$("body").append(
-		`<div class='modal fade modalFilter' role='dialog' id='modalFilter${tableId}'>
+	$("body").append(
+		`<div class='modal fade dtFilter' role='dialog' id='dtFilter_${tableId}'>
 			<div class='modal-dialog'  role='document'>
 				<div class='modal-content'>
 					<div class='modal-header'>
-						<h5>Configuracion</h5>
-						<button data-bs-toggle='modal' data-bs-target='#modalFilter${tableId}'><i class='fa fa-times'></i></button>
+						<h5></h5>
+						<button data-bs-toggle='modal' data-bs-target='#dtFilter_${tableId}'><i class='fa fa-times'></i></button>
 					</div>
 					<div class='modal-body'>
 						<fieldset>
-							<legend>Filtros</legend>
+							<legend>Filters</legend>
 							<ul data-name='filterCotainer'></ul>
 							<button class='btn btn-light' data-name='addFilter'>
-								<i class='fa fa-plus-circle'></i>Agregar filtro
+								<i class='fa fa-plus-circle'></i>Add filter
 							</button>
 						</fieldset>
 					</div>
 					<div class='modal-footer'>
-						<button class='btn btn-success' id='applyFilters'>Aplicar</button>
+						<button class='btn btn-success' id='applyFilters'>Apply</button>
 					</div>
 				</div>
 			</div>
 		</div>`
 	);
-	$(`#modalFilter${tableId}`).find("[data-name='addFilter']").click(()=>{filterableTableFilters(`modalFilter${tableId}`,'addField',availableFields)});
-	
-	conf.ajax.url=url;
-	conf.ajax.data=function(d){
-		d.opt="dbData";
-		d.filters=filterableTableFilters(`modalFilter${tableId}`,"getFilters");
-	};
+	$(`#dtFilter_${tableId}`).find("[data-name='addFilter']").click(()=>{filterableTableFilters(`dtFilter_${tableId}`,'addField',availableFields)});
 	return {
 		conf
 		,initTable:(args)=>{
+      //create the DataTable object
 			let dataTable=$(htmlTable).DataTable(args);
+      //reference the DataTable's wrapper
+      let exportMenu=$(htmlTable).parents(".dataTables_wrapper");
 			dataTable.on("preDraw",function(){ $(this).find("dropdown-item").off(); });
-			$(`#modalFilter${tableId}`).find("#applyFilters").click(()=>{ $(`#modalFilter${tableId}`).modal("hide"); dataTable.ajax.reload(); });
-			$(htmlTable).parentDOM(1).addClass("dataTableContainer");
-			$(`#modalFilter${tableId}`).find("[data-name='exportContainer']").append($(htmlTable).parentDOM(2).find(".dtExport"));
-			$(htmlTable).parentDOM(1).find(".dtCustomFilter").attr({"data-bs-toggle":"modal","data-bs-target":`#modalFilter${tableId}`}).html("<img  src='/CepudoV2/src/img/Icon/settings-48dp.png'><p>Configuracion</p>");
-			$(htmlTable).parentDOM(2).find(".dt-buttons").remove();
+			$(`#dtFilter_${tableId}`).find("#applyFilters").click(()=>{ $(`#dtFilter_${tableId}`).modal("hide"); dataTable.ajax.reload(); });
+      exportMenu.find(".dt-buttons").addClass("dropdown-menu");
+      exportMenu.find(".dtExports").prepend("<div class='dropdown-toggle' data-bs-toggle='dropdown'><span>Export</span><i class='fas fa-download'></i></div>");
+      exportMenu.find(".dt-button").addClass("dropdown-item");
+      exportMenu.find(".dtFilters").append("<span>Filters</span><i class='fas fa-filter'></i>").attr({"data-bs-toggle":"modal","data-bs-target":`#dtFilter_${tableId}`});;
+      exportMenu.find(".dtAdd").append("<span>Add</span><i class='fas fa-plus-circle'></i>");
 			return dataTable;
 		}
-	}*/
+	}
 }
 
 window.componentsFormats=componentsFormats;

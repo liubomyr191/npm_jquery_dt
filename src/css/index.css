@@ -117,8 +117,8 @@ table.dataTable {
 .dtToolBar > .dataTables_filter > label,
 #moduleForms,
 #moduleForms > button,
-.modal.modalFilter [data-name="filterCotainer"] fieldset > div,
-.modal.modalFilter [data-name="addFilter"] {
+.modal.dtFilter [data-name="filterCotainer"] fieldset > div,
+.modal.dtFilter [data-name="addFilter"] {
   display: flex;
   flex-direction: row;
   align-items: center;
