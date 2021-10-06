@@ -81,16 +81,19 @@ var componentsFormats={
             }
           }
         ]
-        ,"initComplete": function(settings, json) {
-          let exportMenu=$(this).parents("#dbDt_wrapper");
-          exportMenu.find(".dt-buttons").addClass("dropdown-menu");
-          exportMenu.find(".dtExports").prepend("<div class='dropdown-toggle' data-bs-toggle='dropdown'><span>Export</span><i class='fas fa-download'></i></div>");
-          exportMenu.find(".dt-button").addClass("dropdown-item");
-          exportMenu.find(".dtFilters").append("<span>Filters</span><i class='fas fa-filter'></i>");
-          exportMenu.find(".dtAdd").append("<span>Add</span><i class='fas fa-plus-circle'></i>");
-        }
       };
   }
+  ,filterOperations:()=>{
+		return [
+			{"name":"","operation":""}
+			,{"name":"Igual","operation":"="},{"name":"Diferente","operation":"!="}
+			,{"name":"Mayor","operation":">"},{"name":"Mayor o igual","operation":">="}
+			,{"name":"Menor","operation":"<"},{"name":"Menor o igual","operation":"<="}
+			,{"name":"Contiene","operation":"LIKE .%-%."},{"name":"No contiene","operation":"NOT LIKE .%-%."}
+			,{"name":"Comienza con","operation":"LIKE .-%."},{"name":"No comienza con","operation":"NOT LIKE .-%."}
+			,{"name":"Termina con","operation":"LIKE .%-."},{"name":"No termina con","operation":"NOT LIKE .%-."}
+		];
+	}
 }
 
 function filterableTable(htmlTable,url){
@@ -99,9 +102,7 @@ function filterableTable(htmlTable,url){
 	let tableId=$(htmlTable)[0].id;
 	let conf=componentsFormats.dtTable();
   conf.ajax.url=url;
-	conf.ajax.data=function(d){ d.opt="dbData";
-		//d.filters=filterableTableFilters(`dtFilter_${tableId}`,"getFilters");
-	};
+	conf.ajax.data=function(d){ d.opt="dbData"; d.filters=getFilters(`#dtFilter_${tableId}`); };
 
   //add index and data-name to columns for later use
 	htmlTable.find("thead>tr>th").each((index,header)=>{
@@ -131,22 +132,118 @@ function filterableTable(htmlTable,url){
 						</fieldset>
 					</div>
 					<div class='modal-footer'>
-						<button class='btn btn-success' id='applyFilters'>Apply</button>
+						<button class='btn btn-success' data-name='applyFilters'>Apply</button>
 					</div>
 				</div>
 			</div>
 		</div>`
 	);
-	$(`#dtFilter_${tableId}`).find("[data-name='addFilter']").click(()=>{filterableTableFilters(`dtFilter_${tableId}`,'addField',availableFields)});
+
+  let addField=(modal,fields)=>{
+    let dom=`<li>
+					<fieldset>
+						<legend>Column:</legend>
+						<div>
+							<select class='form-control' data-name='fieldSelect'>
+								<option value='-1' data-type='-1'></option>
+								${ fields.map(field=>{ return `<option value='${field.name}' data-type='${field.type}'>${field.text}</option>`;}) }
+							</select>
+							<button data-name='deleteField'><i class='fa fa-times'></i></button>
+						</div>
+						<ul data-name='fieldOperations'>
+							<li>
+								<button data-name='addOperation'><i class='fa fa-plus-circle'></i></button>
+								<select class='form-control' data-name='operationSelect'>
+								${ componentsFormats.filterOperations().map(opt=>{ return `<option value='${opt.operation}'>${opt.name}</option>`; }) }
+								</select>
+								<input type='text' class='form-control' placeholder='Valor'></input>
+							</li>
+						</ul>
+					</fieldset>
+				</li>`;
+		$(modal).find("[data-name='filterCotainer']").append(dom);
+		let newFilter=$(modal).find("[data-name='filterCotainer']>li:last-child");
+		newFilter.find("[data-name='fieldSelect']").change((event)=>{ changeField(event.currentTarget); });
+		newFilter.find("[data-name='deleteField']").click((event)=>{ deleteField(event.currentTarget); });
+		newFilter.find("[data-name='addOperation']").click((event)=>{ addOperation(event.currentTarget); });
+		newFilter.find("[data-name='operationSelect']").change((event)=>{ changeOperation(event.currentTarget); });
+  }
+
+  let deleteField=(htmlButton)=>{
+    $(htmlButton).attr("disabled",true);
+    let field=$(htmlButton).parents("li");
+    field.find("*").off();
+    field.remove();
+  }
+
+  let changeField=(htmlSelect)=>{
+    let datatype=$(htmlSelect).find(":selected").attr("data-type");
+    let field=$(htmlSelect).parents("li");
+    field.find("[data-name='fieldOperations'] input[type='text']").val("");
+  }
+
+  let changeOperation=(htmlSelect)=>{
+    if($(htmlSelect).val()!=""){return;}
+		$(htmlSelect).parent().find("input[type='text']").val("");
+  }
+
+  let addOperation=(htmlButton)=>{
+    //change the plus for a cross and adds a new click event
+    $(htmlButton).find("i").removeClass("fa-plus-circle").addClass("fa-times-circle").attr("data-name","deleteOperation");
+    $(htmlButton).off().click((event)=>{ deleteOperation(event.currentTarget); });
+    let field=$(htmlButton).closest("fieldset");
+    let dataType=field.find("select[data-name='fieldSelect']").find(":selected").attr("data-type");
+    field.find("[data-name='fieldOperations']").append(`
+        <li>
+          <button data-name='addOperation'><i class='fa fa-plus-circle'></i></button>
+          <select class='form-control' data-name='operationSelect'>
+          ${ componentsFormats.filterOperations().map(opt=>{ return `<option value='${opt.operation}'>${opt.name}</option>`; }) }
+          </select>
+          <input type='text' class='form-control' placeholder='Valor'></input>
+        </li>
+    `);
+
+    let newOperation=field.find("[data-name='fieldOperations']>li:last-child");
+		newOperation.find("[data-name='addOperation']").click((event)=>{ addOperation(event.currentTarget); });
+		newOperation.find("[data-name='operationSelect']").change((event)=>{  changeOperation(event.currentTarget); });
+  }
+
+  let deleteOperation=(htmlButton)=>{
+    let operation=$(htmlButton).parent();
+		operation.find("*").off();
+		operation.remove();
+  }
+
+  let getFilters=(modal)=>{
+    let filters=[];
+    let fields=$(modal).find("[data-name='filterCotainer']");
+    if(!fields.find(">li").length>=1){return filters;}
+    fields.find(">li").each((index,htmlElement)=>{
+      let field=$(htmlElement).find("[data-name='fieldSelect']");
+      if(field.find(":selected").attr("data-type")=="-1"){return;}
+      let temp={};
+      temp.name=field.val();
+      temp.type=field.find(":selected").attr("data-type");
+      temp.operation=[];
+      $(htmlElement).find("[data-name='fieldOperations']>li").each((index,operation)=>{
+        temp.operation.push({"condition":$(operation).find(">select[data-name='operationSelect']").val(),"value":$(operation).find(">input[type='text']").val()});
+      });
+      filters.push(temp);
+    });
+    return filters;
+  }
+
+	$(`#dtFilter_${tableId}`).find("[data-name='addFilter']").click(()=>{addField(`#dtFilter_${tableId}`,availableFields)});
+
 	return {
 		conf
-		,initTable:(args)=>{
+		,initTable:()=>{
       //create the DataTable object
-			let dataTable=$(htmlTable).DataTable(args);
+			let dataTable=$(htmlTable).DataTable(conf);
       //reference the DataTable's wrapper
       let exportMenu=$(htmlTable).parents(".dataTables_wrapper");
 			dataTable.on("preDraw",function(){ $(this).find("dropdown-item").off(); });
-			$(`#dtFilter_${tableId}`).find("#applyFilters").click(()=>{ $(`#dtFilter_${tableId}`).modal("hide"); dataTable.ajax.reload(); });
+			$(`#dtFilter_${tableId}`).find("[data-name='applyFilters']").click(()=>{  $(`#dtFilter_${tableId}`).modal("hide"); dataTable.ajax.reload(); });
       exportMenu.find(".dt-buttons").addClass("dropdown-menu");
       exportMenu.find(".dtExports").prepend("<div class='dropdown-toggle' data-bs-toggle='dropdown'><span>Export</span><i class='fas fa-download'></i></div>");
       exportMenu.find(".dt-button").addClass("dropdown-item");
