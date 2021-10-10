@@ -6,7 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/index.css";
 
 import $ from "jquery";
-window.jquery = window.$ = $;
+window.jQuery = window.jquery = window.$ = $;
 import * as bootstrap from "bootstrap";
 window.bootstrap=bootstrap;
 import JSZip from "jszip"; window.JSZip = JSZip;
@@ -239,17 +239,19 @@ function filterableTable(htmlTable,url){
       //create the DataTable object
 			let dataTable=$(htmlTable).DataTable(conf);
       //reference the DataTable's wrapper
-      let exportMenu=$(htmlTable).parents(".dataTables_wrapper");
+      let dataTableContainer=$(htmlTable).parents(".dataTables_wrapper");
+      dataTableContainer.attr("data-overflow",$(htmlTable).attr("data-overflow"));
 			dataTable.on("preDraw",function(){ $(this).find("dropdown-item").off(); });
 			$(`#dtFilter_${tableId}`).find("[data-name='applyFilters']").click(()=>{
         bootstrap.Modal.getInstance(document.getElementById(`dtFilter_${tableId}`)).hide();
         dataTable.ajax.reload(); 
       });
-      exportMenu.find(".dt-buttons").addClass("dropdown-menu");
-      exportMenu.find(".dtExports").prepend("<div class='dropdown-toggle' data-bs-toggle='dropdown'><span>Export</span><i class='fas fa-download'></i></div>");
-      exportMenu.find(".dt-button").addClass("dropdown-item");
-      exportMenu.find(".dtFilters").append("<span>Filters</span><i class='fas fa-filter'></i>").attr({"data-bs-toggle":"modal","data-bs-target":`#dtFilter_${tableId}`});;
-      exportMenu.find(".dtAdd").append("<span>Add</span><i class='fas fa-plus-circle'></i>");
+      dataTableContainer.find(".dt-buttons").addClass("dropdown-menu");
+      dataTableContainer.find(".dtExports").prepend("<div class='dropdown-toggle' data-bs-toggle='dropdown'><span>Export</span><i class='fas fa-download'></i></div>");
+      dataTableContainer.find(".dt-button").addClass("dropdown-item");
+      dataTableContainer.find(".dtFilters").append("<span>Filters</span><i class='fas fa-filter'></i>").attr({"data-bs-toggle":"modal","data-bs-target":`#dtFilter_${tableId}`});
+      dataTableContainer.find(".dataTables_filter input").addClass("form-control");
+      dataTableContainer.find(".dtAdd").append("<span>Add</span><i class='fas fa-plus-circle'></i>");
 			return dataTable;
 		}
 	}

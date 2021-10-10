@@ -51,20 +51,12 @@ ul {
 
 html,
 body {
+  width: 100%;
+  height: 100%;
   position: relative;
 }
 
-html,
 body {
-  width: 100%;
-  height: 100%;
-}
-
-body {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr auto;
-  justify-items: center;
   padding: 0.25rem 0.65rem;
 }
 
@@ -74,41 +66,6 @@ body {
 
 form.login {
   align-self: center;
-}
-
-.dataTables_wrapper {
-  width: 100%;
-  padding: 0.5rem 1rem;
-}
-
-table.dataTable {
-  margin: 0px !important;
-  max-width: unset !important;
-}
-
-.dt {
-  width: 100% !important;
-  position: relative;
-  box-sizing: border-box;
-  border-radius: 0.5rem;
-  padding: 0rem !important;
-}
-
-.dt[data-overflow="y"] {
-  overflow: auto;
-}
-
-.dataTableContainer {
-  padding: 0.5rem;
-}
-
-.dtToolBar {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto auto;
-  column-gap: 0.5rem;
-  padding: 0.5rem;
-  background-color: var(--vanadyl-blue);
-  border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .dtToolBar > .dtInfo,
@@ -132,8 +89,73 @@ table.dataTable {
   column-gap: 0.5rem;
 }
 
+table.dataTable {
+  margin: 0px !important;
+  max-width: unset !important;
+  width: 100% !important;
+}
+
+.dt {
+  position: relative;
+  border-radius: 0.5rem;
+  padding: 0rem !important;
+}
+
+.dataTables_wrapper[data-overflow="y"] > div:nth-child(2) {
+  overflow-x: auto;
+}
+
+.dataTableContainer {
+  padding: 0.5rem;
+}
+
+.dtToolBar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  background-color: var(--vanadyl-blue);
+  row-gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  grid-template-areas:
+    "info info info"
+    "search search search"
+    "btnAdd btnFilter btnExport";
+  column-gap: 0.5rem;
+}
+
+.dtToolBar > .dtAdd > span,
+.dtToolBar > .dtFilters > span,
+.dtToolBar > .dtExports > .dropdown-toggle > span {
+  display: none;
+}
+
+.dtToolBar > .dtInfo {
+  grid-area: info;
+}
+
+.dtToolBar > .dataTables_filter {
+  grid-area: search;
+}
+
+.dtToolBar > .dtAdd {
+  grid-area: btnAdd;
+  justify-self: flex-end;
+}
+
+.dtToolBar > .dtFilters {
+  grid-area: btnFilter;
+  justify-self: center;
+}
+
+.dtToolBar > .dtExports {
+  grid-area: btnExport;
+  justify-self: flex-start;
+}
+
 .dtToolBar > .dataTables_filter {
   justify-content: center;
+  margin: 0px;
+  padding: 0.25rem 1rem;
 }
 
 .dataTables_wrapper .dtToolBar .dataTables_length select,
@@ -149,13 +171,17 @@ table.dataTable {
   border: unset;
   text-decoration: none;
 }
+.dataTables_wrapper .dtToolBar .dataTables_filter input {
+  border: 0.075rem solid rgba(0, 0, 0, 0.5);
+  padding: 0.15rem 0.5rem !important;
+}
 
 .dtToolBar > .dtAdd,
 .dtToolBar > .dtFilters,
 .dtToolBar > .dtExports {
   background-color: var(--lynx-white);
   border-radius: 0.5rem;
-  padding: 0.25rem 1rem;
+  padding: 0.5rem 1rem;
   cursor: pointer;
 }
 
@@ -267,14 +293,6 @@ table.dataTable {
 .dt > thead > tr > th {
   background-color: var(--vanadyl-blue);
 }
-
-/*.dt > thead > tr > th:first-child {
-  border-radius: 0.5rem 0 0 0;
-}
-
-.dt > thead > tr > th:last-child {
-  border-radius: 0 0.5rem 0 0;
-}*/
 
 .dt > tbody > tr:last-child > td:last-child {
   border-radius: 0 0 0.5rem 0;
@@ -511,4 +529,31 @@ table.dataTable.no-footer {
 
 .modal.dtFilter ul[data-name="fieldOperations"] > li > input {
   grid-area: value;
+}
+
+@media screen and (min-width: 767px) {
+  .dtToolBar {
+    grid-template-columns: auto 1fr auto auto auto;
+    row-gap: unset;
+  }
+
+  .dtToolBar > .dtAdd > span,
+  .dtToolBar > .dtFilters > span,
+  .dtToolBar > .dtExports > .dropdown-toggle > span {
+    display: unset;
+  }
+
+  .dtToolBar > .dtInfo,
+  .dtToolBar > .dataTables_filter,
+  .dtToolBar > .dtAdd,
+  .dtToolBar > .dtFilters,
+  .dtToolBar > .dtExports {
+    grid-area: unset;
+  }
+
+  .dtToolBar > .dtAdd,
+  .dtToolBar > .dtFilters,
+  .dtToolBar > .dtExports {
+    justify-self: unset;
+  }
 }
