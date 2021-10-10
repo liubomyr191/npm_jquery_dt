@@ -53,7 +53,7 @@ function filterableTable(htmlTable,url){
         ,"emptyTable":"No data."
         ,"info":"_START_ - _END_ of _TOTAL_"
         ,"search":"Search:"
-        ,"infoFiltered":"(From _MAX_ records)"
+        ,"infoFiltered":"(_MAX_)"
         ,"loadingRecords":"Loading..."
         ,"aria":{"sortAscending":": Order asc.","sortDescending": ": Order desc."}
       }

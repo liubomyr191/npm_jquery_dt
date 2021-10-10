@@ -131,6 +131,7 @@ table.dataTable {
 
 .dtToolBar > .dtInfo {
   grid-area: info;
+  justify-content: space-between;
 }
 
 .dtToolBar > .dataTables_filter {
@@ -549,6 +550,10 @@ table.dataTable.no-footer {
   .dtToolBar > .dtFilters,
   .dtToolBar > .dtExports {
     grid-area: unset;
+  }
+
+  .dtToolBar > .dtInfo {
+    justify-content: unset;
   }
 
   .dtToolBar > .dtAdd,
