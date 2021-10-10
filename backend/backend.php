@@ -5,12 +5,10 @@ header("Content-Type: application/json");
 header("Access-Control-Allow-Methods: GET, POST");
 //parse_str(urldecode(iconv("windows-1251", "UTF-8", file_get_contents("php://input"))), $dtData);
 //echo print_r($dtData["columns"]);
-
 $db=new db();
 $con=$db->dbConnect();
 if(!$con["status"]){echo json_encode($con);return;} //if could not connect to the database will return the error.
 $con=$con["con"]; //get the database connection
-
 $sql="SELECT ID,First_name,Last_name,Age,Birth_date FROM DataTables";
 $query=$con->prepare($sql);
 $query->execute();
@@ -45,6 +43,10 @@ if(!empty($_REQUEST["search"]["value"])){
 
 if(isset($_REQUEST["order"])){
   $sql.=" ORDER BY ".$_REQUEST["columns"][$_REQUEST["order"][0]["column"]]["name"]." ".$_REQUEST["order"][0]["dir"];
+}
+
+if($dtParam["start"]!=-1){
+  $sql.=" LIMIT {$_REQUEST['start']},{$_REQUEST['length']}";
 }
 
 $query=$con->prepare($sql);
