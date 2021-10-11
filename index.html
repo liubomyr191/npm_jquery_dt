@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NPM-jquery-datatables-template</title>
     <script type="module" src="/src/js/index.js"></script>
+    <script type="module" src="/src/js/menu.js" defer></script>
   </head>
-  <body id="app"></body>
+  <body id="app">
+    <table id="dbDt" class="dt" data-overflow="y">
+      <thead>
+          <tr>
+              <th data-export="y" data-type="int">ID</th>
+              <th data-export="y" data-type="string">First name</th>
+              <th data-export="y" data-type="string">Last name</th>
+              <th data-export="y" data-type="int">Age</th>
+              <th data-export="y" data-type="date">Birth date</th>
+              <th data-export="n" class="all"></th>
+          </tr>
+      </thead>
+    </table>
+  </body>
 </html>

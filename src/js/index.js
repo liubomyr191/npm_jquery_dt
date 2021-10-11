@@ -259,9 +259,9 @@ function filterableTable(htmlTable,url){
 
 window.filterableTable=filterableTable;
 
-const router = new Navigo("/");
+/*const router = new Navigo("/");
 router
 .on("/",()=>{
   $("#app").load("/src/pages/menu.html");
 })
-.resolve();
+.resolve();*/
