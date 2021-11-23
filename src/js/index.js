@@ -15,7 +15,6 @@ import dt from "datatables.net"; dt(window, $);
 import dtResp from "datatables.net-responsive"; dtResp(window, $);
 import dtBtnHtml5 from "datatables.net-buttons/js/buttons.html5.js"; dtBtnHtml5(window, $);
 import dtBtnPrint from "datatables.net-buttons/js/buttons.print.js"; dtBtnPrint(window, $);
-import Navigo from "navigo";
 
 function filterableTable(htmlTable,url){
 	if(htmlTable.length==0){return;}
@@ -43,6 +42,11 @@ function filterableTable(htmlTable,url){
         "type":"POST"
         ,"url":url
         ,"data":(d)=>{ d.opt="dbData"; d.filters=getFilters(`#dtFilter_${tableId}`); }
+        ,"beforeSend":function(){
+          if($(htmlTable).find("tbody tr.dtLoading").length!==0){return;}
+          let loadingSpinner=`<tr class='dtLoading' style='${$(htmlTable).find("tbody>tr").length<=0?"height:10rem;":""}' ><td colspan='${$(htmlTable).find(">thead th").length}'><div><div class='loadingSpinner'><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div></td></tr>`;
+          if($(htmlTable).find("tbody>tr").length>0){$(htmlTable).find("tbody").prepend(loadingSpinner);}else{$(htmlTable).find("tbody").html(loadingSpinner);}
+        }
         ,"datatype": "json"
         ,"error":(xhr, status, error)=>{if(xhr.status>=200 && xhr.status<=299){return;} console.log(`HTTP request error: ${xhr.status}`); }
       }
