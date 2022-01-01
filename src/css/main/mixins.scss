@@ -1,0 +1,35 @@
+@mixin flex-c($justify, $align) {
+	display: flex;
+	flex-direction: column;
+	@if ($justify != "") {
+		justify-content: $justify;
+	}
+	@if ($align != "") {
+		align-items: $align;
+	}
+}
+
+@mixin flex-r($justify, $align) {
+	display: flex;
+	flex-direction: row;
+	@if ($justify != "") {
+		justify-content: $justify;
+	}
+	@if ($align != "") {
+		align-items: $align;
+	}
+}
+
+@mixin webfont($family, $dir, $file, $weight, $style) {
+	@font-face {
+		font-family: $family;
+		src: url($file + ".eot");
+		src: url($dir + "/" + $file + ".eot?#iefix") format("embedded-opentype"), url($dir + "/" + $file + ".woff") format("woff"), url($dir + "/" + $file + ".ttf") format("truetype"), url($dir + "/" + $file + ".svg") format("svg");
+		@if ($weight != "") {
+			font-weight: $weight;
+		}
+		@if ($style != "") {
+			font-style: $style;
+		}
+	}
+}

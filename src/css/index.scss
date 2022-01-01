@@ -1,0 +1,10 @@
+@import "./main/variables.scss";
+@import "./main/mixins.scss";
+@import "./main/fonts.scss";
+@import "./main/reset.scss";
+@import "./blocks/loading-spinner.scss";
+@import "./blocks/datatable.scss";
+
+form.login {
+	align-self: center;
+}

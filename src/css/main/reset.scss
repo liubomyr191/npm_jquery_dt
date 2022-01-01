@@ -1,0 +1,45 @@
+html,
+body {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	body {
+		padding: 0.25rem 0.65rem;
+	}
+}
+
+*,
+::after,
+::before {
+	box-sizing: border-box;
+}
+
+*:not(:is(.fa, .fab, .fad, .fal, .far, .fas)) {
+	font-family: "Inter", Arial, Helvetica, sans-serif;
+	font-size: 0.9rem;
+}
+
+.dropdown-toggle::after {
+	display: none;
+}
+
+p,
+legend,
+h1,
+h2,
+h3,
+h4,
+h5,
+ul,
+li {
+	margin: 0px;
+	padding: 0px;
+}
+
+ul {
+	list-style: none;
+}
+
+#content {
+	padding: 0.5rem;
+}
