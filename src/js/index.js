@@ -106,7 +106,7 @@ function filterableTable(htmlTable, url, sql = "") {
 			emptyTable: "No data.",
 			info: "_START_ - _END_ of _TOTAL_",
 			search: "",
-			searchPlaceholder: "Search...",
+			searchPlaceholder: "Search",
 			infoFiltered: "(_MAX_)",
 			loadingRecords: "Loading...",
 			aria: { sortAscending: ": Order asc.", sortDescending: ": Order desc." },
@@ -179,7 +179,9 @@ function filterableTable(htmlTable, url, sql = "") {
 	htmlTable.find("thead>tr>th").each((index, header) => {
 		$(header).attr("data-num", index);
 		//replace the spaces in the name for underscore for backend purpose.
-		$(header).attr("data-name", $(header).text() != "" ? $(header).text().replace(" ", "_") : "-1");
+		if (typeof $(header).attr("data-name") === "undefined") {
+			$(header).attr("data-name", $(header).text() != "" ? $(header).text().replace(" ", "_") : "-1");
+		}
 		if ($(header).attr("data-name") == -1) {
 			return;
 		}
