@@ -235,7 +235,7 @@ function filterableTable(htmlTable, url, sql = "") {
 									return `<option value='${opt.operation}'>${opt.name}</option>`;
 								})}
 								</select>
-								<input type='text' class='form-control' placeholder='Value'></input>
+								<input data-name="operationValue" type='text' class='form-control' placeholder='Value'></input>
 							</li>
 						</ul>
 					</fieldset>
@@ -266,16 +266,12 @@ function filterableTable(htmlTable, url, sql = "") {
 	let changeField = (htmlSelect) => {
 		let datatype = $(htmlSelect).find(":selected").attr("data-type");
 		let field = $(htmlSelect).parents("li");
-		field.find("[data-name='fieldOperations'] input[type='text']").val("").attr("placeholder", "").off();
+		field.find("[data-name='fieldOperations'] input[data-name='operationValue']").val("").attr({ placeholder: "", type: "text" }).off();
 		if (datatype == "date") {
-			field.find("[data-name='fieldOperations'] input[type='text']").attr("placeholder", "YYYY/MM/DD");
+			field.find("[data-name='fieldOperations'] input[data-name='operationValue']").attr({ placeholder: "yyyy/mm/dd" });
 		}
 		if (datatype == "int") {
-			field.find("[data-name='fieldOperations'] input[type='text']").on("keypress", (event) => {
-				if (event.which != 8 && event.which != 0 && (event.which < 48 || event.which > 57)) {
-					return false;
-				}
-			});
+			field.find("[data-name='fieldOperations'] input[data-name='operationValue']").attr("type", "number");
 		}
 	};
 
@@ -283,7 +279,7 @@ function filterableTable(htmlTable, url, sql = "") {
 		if ($(htmlSelect).val() != "") {
 			return;
 		}
-		$(htmlSelect).parent().find("input[type='text']").val("");
+		$(htmlSelect).parent().find("input[data-name='operationValue']").val("");
 	};
 
 	let addOperation = (htmlButton) => {
@@ -305,7 +301,7 @@ function filterableTable(htmlTable, url, sql = "") {
 				return `<option value='${opt.operation}'>${opt.name}</option>`;
 			})}
           </select>
-          <input type='text' class='form-control' placeholder='Value'></input>
+          <input data-name="operationValue" type='text' class='form-control' placeholder='Value'></input>
         </li>
     `);
 
@@ -342,7 +338,7 @@ function filterableTable(htmlTable, url, sql = "") {
 			$(htmlElement)
 				.find("[data-name='fieldOperations']>li")
 				.each((index, operation) => {
-					temp.operation.push({ condition: $(operation).find(">select[data-name='operationSelect']").val(), value: $(operation).find(">input[type='text']").val() });
+					temp.operation.push({ condition: $(operation).find(">select[data-name='operationSelect']").val(), value: $(operation).find(">input[data-name='operationValue']").val() });
 				});
 			filters.push(temp);
 		});
