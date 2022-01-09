@@ -21,12 +21,18 @@ dtBtnHtml5(window, $);
 import dtBtnPrint from "datatables.net-buttons/js/buttons.print.js";
 dtBtnPrint(window, $);
 
-function filterableTable(htmlTable, url) {
+function filterableTable(htmlTable, url, sql = "") {
 	if (htmlTable.length == 0) {
 		return;
 	}
-
+	let tableStart = htmlTable.offset().top - 5;
 	let conf = {
+		drawCallback: (settings) => {
+			if (settings._iDisplayStart != tableStart) {
+				var targetOffset = tableStart;
+				$("html,body").animate({ scrollTop: targetOffset }, 5);
+			}
+		},
 		order: [[0, "desc"]],
 		dom: "<'dtToolBar'<'dtInfo'li>f<'dtAdd'><'dtFilters'><'dtExports dropdown'B>><t>p",
 		pagingType: "full_numbers",
@@ -41,13 +47,13 @@ function filterableTable(htmlTable, url) {
 					}).join("");
 					return data ? $("<div class='slider' />").append($("<table class='dtRowDetails' />").append(data)) : false;
 				},
-				display: function (row, update, render) {
+				display: (row, update, render) => {
 					if (update) {
 						return;
 					}
 
 					if (row.child.isShown()) {
-						$("div.slider", row.child()).slideUp(300, function () {
+						$("div.slider", row.child()).slideUp(225, () => {
 							row.child(false);
 							$(row.node()).removeClass("parent shown");
 						});
@@ -58,7 +64,7 @@ function filterableTable(htmlTable, url) {
 						console.log("asd");
 						row.child(render(), "child").show();
 						$(row.node()).addClass("parent shown");
-						$("div.slider", row.child()).slideDown(300);
+						$("div.slider", row.child()).slideDown(225);
 						return;
 					}
 				},
@@ -69,9 +75,10 @@ function filterableTable(htmlTable, url) {
 			url: url,
 			data: (d) => {
 				d.opt = "dbData";
+				d.sql = sql;
 				d.filters = getFilters(`#dtFilter_${tableId}`);
 			},
-			beforeSend: function () {
+			beforeSend: () => {
 				if ($(htmlTable).find("tbody tr.dtLoading").length !== 0) {
 					return;
 				}
@@ -98,7 +105,8 @@ function filterableTable(htmlTable, url) {
 			infoEmpty: "Empty.",
 			emptyTable: "No data.",
 			info: "_START_ - _END_ of _TOTAL_",
-			search: "Search:",
+			search: "",
+			searchPlaceholder: "Search...",
 			infoFiltered: "(_MAX_)",
 			loadingRecords: "Loading...",
 			aria: { sortAscending: ": Order asc.", sortDescending: ": Order desc." },
@@ -115,11 +123,11 @@ function filterableTable(htmlTable, url) {
 				render: () => {
 					return `<div class='dropstart'>
                     <div class='dropdown-toggle' data-bs-toggle='dropdown'>
-                        <i class='fas fa-ellipsis-v'></i>
+                        <i class='fas fa-ellipsis-h'></i>
                     </div>
                     <div class='dropdown-menu'>
-                      <a class='dropdown-item' data-cmd='Eliminar'><i class='far fa-trash-alt'></i>Eliminar</a>
-                      <a class='dropdown-item' data-cmd='Modificar'><i class='fas fa-edit'></i>Modificar</a>
+                      <a class='dropdown-item' data-cmd='Delete'><i class='far fa-trash-alt'></i>Delete</a>
+                      <a class='dropdown-item' data-cmd='Edit'><i class='fas fa-edit'></i>Edit</a>
                     </div>
                   </div>`;
 				},
@@ -131,7 +139,8 @@ function filterableTable(htmlTable, url) {
 			{ extend: "pdfHtml5", title: "", className: "dtExport", text: "<i class='fas fa-file-pdf'></i><span>PDF</span>", exportOptions: { columns: "th[data-export='y']" } },
 			{
 				extend: "print",
-				title: "",
+				//autoPrint: false,
+				title: "Datatable print",
 				className: "dtExport",
 				text: "<i class='fas fa-print'></i><span>Print</span>",
 				exportOptions: { columns: "th[data-export='y']" },
@@ -139,9 +148,7 @@ function filterableTable(htmlTable, url) {
 					$(win.document.body).css("font-size", "0.95rem");
 					$(win.document.body).find("h1").remove();
 					$(win.document.body).find("div").remove();
-					//$(win.document.body).find("table").removeClass("dt espacio-1");
-					$(win.document.body).find("table").css("cssText", "margin-top:0px !important;margin-bottom:0px !important;");
-					$(win.document.body).find("table").css({ "font-size": "inherit", width: "100%" }).addClass("table table-stripped compact");
+					$(win.document.body).find("table").css({ "font-size": "inherit", width: "100%" }).addClass("print-table");
 				},
 			},
 		],
@@ -353,15 +360,16 @@ function filterableTable(htmlTable, url) {
 					bootstrap.Modal.getInstance(document.getElementById(`dtFilter_${tableId}`)).hide();
 					dataTable.ajax.reload();
 				});
+			dataTableContainer.find(".dataTables_filter>label").prepend("<i class='fas fa-search'></i>"); //adds search icon
 			dataTableContainer.find(".dt-buttons").addClass("dropdown-menu");
-			dataTableContainer.find(".dtExports").prepend("<div class='dropdown-toggle' data-bs-toggle='dropdown'><span>Export</span><i class='fas fa-download'></i></div>");
+			dataTableContainer.find(".dtExports").prepend("<div class='dropdown-toggle' data-bs-toggle='dropdown'><i class='fas fa-download'></i><span>Export</span></div>");
 			dataTableContainer.find(".dt-button").addClass("dropdown-item");
 			dataTableContainer
 				.find(".dtFilters")
-				.append("<span>Filters</span><i class='fas fa-filter'></i>")
+				.append("<i class='fas fa-filter'></i><span>Filters</span>")
 				.attr({ "data-bs-toggle": "modal", "data-bs-target": `#dtFilter_${tableId}` });
 			dataTableContainer.find(".dataTables_filter input").addClass("form-control");
-			dataTableContainer.find(".dtAdd").append("<span>Add</span><i class='fas fa-plus-circle'></i>");
+			dataTableContainer.find(".dtAdd").append("<i class='fas fa-plus-circle'></i><span>Add</span>");
 			return dataTable;
 		},
 	};
