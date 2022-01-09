@@ -29,7 +29,13 @@ try{
     foreach($_REQUEST["filters"] as $fieldIndex=>$field){
       $sql.=($fieldIndex==0?"(":" AND (");
       foreach($field["operation"] as $opIndex=>$operation){
-        $sql.=($opIndex==0?" ":" OR ").$field["name"]." ".$operation["condition"]." ".$operation["value"];
+        //if is a LIKE condition
+        if(strpos($operation["condition"],"-",0)>0){
+          $sql.=($opIndex==0?" ":" OR ").$field["name"]." ".str_replace(".","'",str_replace("-", $operation["value"], $operation["condition"]));
+          continue;
+        }
+        //if is a regular condition
+        $sql.=($opIndex==0?" ":" OR ").$field["name"]." ".$operation["condition"]." ".($field["type"]=="int" ? $operation["value"] : "'".$operation["value"]."'");
       }
       $sql.=")";
     }

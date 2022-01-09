@@ -266,7 +266,17 @@ function filterableTable(htmlTable, url, sql = "") {
 	let changeField = (htmlSelect) => {
 		let datatype = $(htmlSelect).find(":selected").attr("data-type");
 		let field = $(htmlSelect).parents("li");
-		field.find("[data-name='fieldOperations'] input[type='text']").val("");
+		field.find("[data-name='fieldOperations'] input[type='text']").val("").attr("placeholder", "").off();
+		if (datatype == "date") {
+			field.find("[data-name='fieldOperations'] input[type='text']").attr("placeholder", "YYYY/MM/DD");
+		}
+		if (datatype == "int") {
+			field.find("[data-name='fieldOperations'] input[type='text']").on("keypress", (event) => {
+				if (event.which != 8 && event.which != 0 && (event.which < 48 || event.which > 57)) {
+					return false;
+				}
+			});
+		}
 	};
 
 	let changeOperation = (htmlSelect) => {
